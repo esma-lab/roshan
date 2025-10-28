@@ -4,6 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 	<title>Kumaşçı - Minimal ve Modern</title>
+	<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 	<style>
 /* Genel sayfa, arka plan görseli ve hafif şeffaf overlay */
 :root{
@@ -15,28 +16,52 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-	margin:0;
-	font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-	color:var(--accent);
-	background-image: url('bg.jpg');
-	background-size: cover;
-	background-position: center;
-	background-attachment: fixed;
-	position:relative;
-	padding-bottom:env(safe-area-inset-bottom);
-	padding-top:env(safe-area-inset-top);
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: var(--accent);
+
+  /* Arka plan için modern yöntem */
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Sabit görünümü mobilde desteklemek için position ve pseudo element ile */
+  position: relative;
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
 }
-/* Arka planı hafifçe şeffaf/eşitlemek için overlay */
+
+/* Pseudo element ile sabit arka plan */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: -1; /* içeriğin arkasında kalsın */
+}
+/* Arka planı hafifçe şeffaf/eşitlemek için overlay
 body::before{
 	content:'';
 	position:fixed;
 	top:0;left:0;right:0;bottom:0;
-	background: rgba(255,255,255,0.32); /* şeffaflık burada ayarlanabilir */
+	background: rgba(255,255,255,0.32); şeffaflık burada ayarlanabilir
 	pointer-events:none;
 	z-index:0;
 }
-main{position:relative;z-index:1;min-height:100vh;padding:48px 20px}
+main{position:relative;z-index:1;min-height:100vh;padding:48px 20px} */
+
+.baslik {
+  font-family: 'Dancing Script', cursive;
+  font-size: 30px;
+  color: rgb(212, 181, 0); /* burayı gold yaptık */
+}
 
 /* HERO */
 .hero{
@@ -79,6 +104,7 @@ main{position:relative;z-index:1;min-height:100vh;padding:48px 20px}
 	background: var(--card-bg);
 	backdrop-filter: blur(var(--glass-blur));
 	border-radius: var(--radius);
+	border: 1px solid rgb(110, 94, 0);
 	overflow:hidden;
 	box-shadow: 0 6px 20px rgba(15,15,15,0.08);
 	transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s;
@@ -240,7 +266,7 @@ footer.site-footer{
 
 /* Logo (üstte) */
 .topbar{position:relative;display:flex;justify-content:center;z-index:auto;pointer-events:auto;padding:0 0; padding-top: 35px; }
-.logo-container{display:flex;align-items:center;justify-content:center}
+.logo-container{ border: 2px solid rgb(173, 147, 0); border-radius: 13px; display:flex;align-items:center;justify-content:center}
 .site-logo{height:90px;width:auto;border-radius:12px;box-shadow:0 8px 28px rgba(2,6,23,0.12);transition:transform .45s cubic-bezier(.2,.9,.3,1),opacity .4s;opacity:0;transform:translateY(-8px) scale(.96)}
 .site-logo.animate{opacity:1;transform:translateY(0) scale(1);animation:logoPop .7s cubic-bezier(.2,.9,.3,1) both}
 @media (max-width:520px){ .site-logo{height:120px} .topbar{padding:1px 1} }
@@ -277,8 +303,8 @@ footer.site-footer{
 	<main>
 		<header class="hero">
 			<div class="hero-inner animate-on-scroll">
-				<h1 style="color: rgb(31, 0, 0);" class="fancy-title">ROSHAN</h1>
-				<p style="font-size: 20PX; color: rgb(31, 0, 0); " class="subtitle">yüksek kaliteli kumaşlarımız Türkiyede üretiliyor ve size eşsiz bir konfor sunuyor.</p>
+				<!-- <h1 style="color: rgb(31, 0, 0);" class="fancy-title">ROSHAN</h1> -->
+				<p class="baslik">yüksek kaliteli kumaşlarımız Türkiyede üretiliyor ve size eşsiz bir konfor sunuyor.</p>
 			</div>
 		</header>
 
@@ -457,7 +483,7 @@ footer.site-footer{
 	</footer>
 
 	<!-- Sabit (floating) WhatsApp butonu mobil için -->
-	<a class="whatsapp-float" href="https://wa.me/971555727926?text=%4D%65%72%68%61%62%61%20%52%6F%C5%9Fan%20%6B%75%70%72%61%20%6B%75%6D%61%C5%9F%20%69%6C%65%20%69%6C%65%74%69%C5%9F%69%6D%65%20%67%65%C3%A7%74%69%6E%69%7A%2C%20%73%69%7A%65%20%6E%61%73%C4%B1%6C%20%79%61%72%64%C4%B1%6D%63%C4%B1%20%6F%6C%61%62%69%6C%69%7A%3F" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişime geç">
+	<a class="whatsapp-float" href="https://wa.me/971555727926?text=%4D%65%72%68%61%62%61%2C%20%52%6F%C5%9Fan%20%4B%75%70%72%61%20%4B%75%6D%61%C5%9F%20%66%69%72%6D%61%73%C4%B1%20%69%6C%65%20%69%6C%65%74%69%C5%9F%69%6D%65%20%67%65%C3%A7%6D%65%6B%20%69%73%74%69%79%6F%72%75%6D%2E%20%4B%75%6D%61%C5%9F%6C%61%72%20%68%61%6B%6B%C4%B1%6E%64%61%20%62%69%6C%67%69%20%61%6C%61%62%69%6C%69%72%6D%69%79%69%6D%3F" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişime geç">
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 			<path d="M20.52 3.48A11.95 11.95 0 0012 0C5.373 0 .01 5.373.01 12.001a11.9 11.9 0 001.637 6.02L0 24l6.184-1.621A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12 0-3.197-1.245-6.2-3.48-8.52z" fill="#25D366"/>
 			<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.672.149-.199.297-.771.966-.945 1.163-.173.198-.347.223-.644.075-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.058-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.173.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.672-1.612-.922-2.207-.242-.579-.487-.5-.672-.51l-.573-.01c-.2 0-.52.075-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487 0 0 .746.322 1.33.161.584-.161 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#fff"/>
