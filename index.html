@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="tr">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<title>Kumaşçı - Minimal ve Modern</title>
+	<style>
+/* Genel sayfa, arka plan görseli ve hafif şeffaf overlay */
+:root{
+	--accent:#2b2b2b;
+	--muted:#6b6b6b;
+	--card-bg: rgba(255,255,255,0.75);
+	--glass-blur: 6px;
+	--radius: 12px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+	margin:0;
+	font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	color:var(--accent);
+	background-image: url('bg.jpg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	position:relative;
+	padding-bottom:env(safe-area-inset-bottom);
+	padding-top:env(safe-area-inset-top);
+}
+/* Arka planı hafifçe şeffaf/eşitlemek için overlay */
+body::before{
+	content:'';
+	position:fixed;
+	top:0;left:0;right:0;bottom:0;
+	background: rgba(255,255,255,0.32); /* şeffaflık burada ayarlanabilir */
+	pointer-events:none;
+	z-index:0;
+}
+main{position:relative;z-index:1;min-height:100vh;padding:48px 20px}
+
+/* HERO */
+.hero{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	padding:80px 20px 60px;
+	text-align:center;
+}
+.hero-inner{max-width:960px}
+.fancy-title{
+	font-family: 'Playfair Display', 'Georgia', serif;
+	font-size: clamp(32px, 6vw, 64px);
+	margin:0 0 12px 0;
+	line-height:1.02;
+	letter-spacing: -0.02em;
+	background: linear-gradient(90deg,#1f2937,#4b5563);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	transform-origin:center;
+}
+.subtitle{
+	margin:0;
+	color:var(--muted);
+	font-size: clamp(14px, 2.2vw, 18px);
+}
+
+/* Kart düzeni - her cihazda 2 sütun olacak şekilde sabitlendi */
+.cards{
+	display:grid;
+	grid-template-columns: repeat(2, minmax(140px, 1fr)); /* her zaman iki sütun */
+	gap:18px;
+	max-width:1100px;
+	margin:40px auto 80px;
+}
+.card{
+	display:flex;
+	flex-direction:column;
+	background: var(--card-bg);
+	backdrop-filter: blur(var(--glass-blur));
+	border-radius: var(--radius);
+	overflow:hidden;
+	box-shadow: 0 6px 20px rgba(15,15,15,0.08);
+	transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s;
+}
+.card:hover{transform: translateY(-6px); box-shadow: 0 18px 40px rgba(15,15,15,0.12)}
+
+.card-image{
+	height:160px;
+	background-color:#f3f3f3;
+	background-position:center;
+	background-size:cover;
+	background-repeat:no-repeat;
+}
+.card-body{padding:18px;display:flex;flex-direction:column;gap:12px}
+.price-row{display:flex;align-items:baseline;gap:12px}
+.price-old{color:var(--muted);font-size:14px;text-decoration:line-through}
+.price-new{font-weight:700;color:#111;font-size:20px}
+
+.features{margin:0;padding:0 0 0 18px;color:var(--muted);font-size:14px}
+.features li{margin:6px 0}
+.btn{
+	margin-top:auto;
+	border:0;padding:10px 14px;border-radius:8px;
+	background:linear-gradient(90deg,#111,#333);color:#fff;font-weight:600;
+	cursor:pointer;align-self:flex-start;
+	padding:12px 16px;
+	border-radius:10px;
+}
+
+/* Küçük ekranlarda biraz daha rahat */
+@media (max-width:520px){
+	.hero{padding:5px 16px}
+	.card-image{height:200px}
+	.price-new{font-size:18px}
+}
+
+/* safe-area ve mobil uygulama ekran boşlukları */
+body{padding-bottom:env(safe-area-inset-bottom);padding-top:env(safe-area-inset-top)}
+
+/* Mobilde background-attachment sabit tutmak performans sorununa neden olabilir — ancak kullanıcı istediği için arka planı sabitliyorum. Mobil tarayıcılar bu kuralı yoksayabilir. */
+body{
+	background-attachment: fixed;
+	-webkit-background-attachment: fixed; /* iOS/Safari için */
+}
+
+@media (max-width:720px){
+	/* Eğer mobilde performans sorunları yaşarsanız bu kuralı kaldırabilirsiniz. Birçok mobil tarayıcı fixed'ı otomatik yoksayar. */
+	body{ /* yine de fixed olarak bırakılıyor */
+		background-attachment: fixed;
+	}
+}
+
+/* Daha küçük ekranlarda tipografi uyarlaması */
+@media (max-width:420px){
+	.fancy-title{font-size:28px}
+	.subtitle{font-size:13px}
+	.card-body{padding:14px}
+	.price-new{font-size:16px}
+}
+
+/* Animasyonlu görünürlük (scroll) */
+.animate-on-scroll{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s cubic-bezier(.2,.9,.3,1)}
+.animate-on-scroll.in-view{opacity:1;transform:none}
+
+/* Başlığa özel giriş animasyonu */
+@keyframes titlePop{
+	0%{opacity:0;transform:translateY(18px) scale(.98) skewY(2deg)}
+	60%{opacity:1;transform:translateY(-6px) scale(1.02) skewY(-1deg)}
+	100%{transform:translateY(0) scale(1) skewY(0)}
+}
+.fancy-title.animate{
+	animation: titlePop .9s cubic-bezier(.2,.9,.3,1) both;
+}
+
+/* Hafif performans dostu düşmeler */
+*{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale }
+
+/* Minimal footer boşluğu - güncellendi: pastel arka plan, düzen ve mobil uyumlu stiller */
+footer.site-footer{
+	max-width:1100px;
+	margin:20px auto 40px;
+	color:var(--muted);
+	text-align:left;
+	background: linear-gradient(180deg, rgba(246,247,252,0.9), rgba(241,244,249,0.95)); /* hafif pastel degrade */
+	background-color:#f6f8fb; /* fallback pastel ton */
+	padding:20px 18px;
+	border-radius:12px;
+	box-shadow: 0 8px 30px rgba(20,30,60,0.04);
+	position:relative;
+	z-index:1;
+}
+
+.footer-inner{
+	display:flex;
+	gap:20px;
+	align-items:flex-start;
+	justify-content:space-between;
+	flex-wrap:wrap;
+	max-width:1040px;
+	margin:0 auto;
+}
+
+.footer-inner .contact,
+.footer-inner .hours,
+.footer-inner .actions{
+	flex:1 1 220px;
+	min-width:180px;
+	text-align:left;
+}
+
+.footer-inner h3{margin:0 0 8px;color:#111;font-size:18px}
+.footer-inner p{margin:6px 0;color:#374151;font-size:14px}
+.footer-inner a{color:#0b5560;text-decoration:none}
+
+.footer-inner .actions{display:flex;align-items:center;gap:12px}
+.footer-inner .actions .btn.whatsapp{
+	background:linear-gradient(90deg,#25D366,#128C7E);
+	color:#fff;padding:10px 14px;border-radius:10px;border:0;font-weight:700;
+	display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(18,140,126,0.12);
+}
+
+.footer-inner .hours h4{margin:0 0 6px;color:#111}
+
+.copyright{ text-align:center;margin-top:14px;color:#6b7280;font-size:13px }
+
+/* Sabit (floating) WhatsApp butonu için stil */
+.whatsapp-float{
+	position:fixed;right:16px;bottom:16px;z-index:9999;
+	width:56px;height:56px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+	background:linear-gradient(180deg,#25D366,#128C7E);box-shadow:0 10px 28px rgba(18,140,126,0.18);
+	transition:transform .15s ease, box-shadow .15s;
+}
+.whatsapp-float:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(18,140,126,0.22)}
+.whatsapp-float svg{width:22px;height:22px}
+
+/* FAQ / Accordion */
+.faq{max-width:1100px;margin:18px auto;padding:12px 18px}
+.faq-inner{background:rgba(255,255,255,0.6);backdrop-filter:blur(4px);border-radius:10px;padding:14px}
+.faq-title{font-size:20px;margin:0 0 10px;color:#111}
+.accordion{display:flex;flex-direction:column;gap:8px}
+.accordion-item{border-radius:8px;overflow:hidden;border:1px solid rgba(16,24,40,0.06)}
+.question{width:100%;text-align:left;padding:12px 14px;background:linear-gradient(90deg,rgba(255,255,255,0.6),rgba(249,250,251,0.8));border:0;font-weight:700;cursor:pointer;color:#0f172a}
+.question[aria-expanded="true"]{background:linear-gradient(90deg,#f1f5f9,#eef2ff)}
+.answer{max-height:0;overflow:hidden;padding:0 14px;transition:max-height .35s ease,padding .35s;background:transparent;color:#374151}
+.answer p{margin:10px 0}
+.accordion-item.open .answer{max-height:260px;padding:10px 14px}
+
+@media (max-width:520px){
+	.faq-inner{padding:10px}
+	.question{padding:10px}
+}
+
+/* Responsive footer */
+@media (max-width:720px){
+	.footer-inner{padding:8px 6px;gap:12px}
+	.footer-inner .contact,.footer-inner .hours,.footer-inner .actions{flex:1 1 100%}
+	.whatsapp-float{right:12px;bottom:12px;width:50px;height:50px}
+}
+
+/* Logo (üstte) */
+.topbar{position:relative;display:flex;justify-content:center;z-index:auto;pointer-events:auto;padding:0 0; padding-top: 35px; }
+.logo-container{display:flex;align-items:center;justify-content:center}
+.site-logo{height:90px;width:auto;border-radius:12px;box-shadow:0 8px 28px rgba(2,6,23,0.12);transition:transform .45s cubic-bezier(.2,.9,.3,1),opacity .4s;opacity:0;transform:translateY(-8px) scale(.96)}
+.site-logo.animate{opacity:1;transform:translateY(0) scale(1);animation:logoPop .7s cubic-bezier(.2,.9,.3,1) both}
+@media (max-width:520px){ .site-logo{height:120px} .topbar{padding:1px 1} }
+
+/* Image modal / popup */
+.img-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;visibility:hidden;transition:opacity .22s ease, visibility .22s}
+.img-modal.open{opacity:1;visibility:visible}
+.img-modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px)}
+.img-modal-content{position:relative;max-width:95vw;max-height:90vh;padding:12px;border-radius:10px;z-index:10001;display:flex;align-items:center;justify-content:center}
+.img-modal-content img{max-width:100%;max-height:80vh;border-radius:8px;box-shadow:0 12px 40px rgba(2,6,23,0.4);object-fit:contain}
+.modal-close{position:absolute;top:-10px;right:-10px;background:#fff;border-radius:999px;border:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 6px 18px rgba(2,6,23,0.12)}
+
+@media (max-width:520px){
+	.img-modal-content img{max-height:72vh}
+}
+</style>
+
+	<!-- Mobil uygulama olarak eklenebilmesi için manifest, tema rengi ve iOS ayarları -->
+	<link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#ffffff">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body>
+
+	<!-- Üst logo -->
+	<header class="topbar">
+		<div class="logo-container">
+			<img id="siteLogo" class="site-logo" src="logo.jpg" alt="Kumaşçı Dubai">
+		</div>
+	</header>
+
+	<main>
+		<header class="hero">
+			<div class="hero-inner animate-on-scroll">
+				<h1 style="color: rgb(31, 0, 0);" class="fancy-title">ROSHAN</h1>
+				<p style="font-size: 20PX; color: rgb(31, 0, 0); " class="subtitle">yüksek kaliteli kumaşlarımız Türkiyede üretiliyor ve size eşsiz bir konfor sunuyor.</p>
+			</div>
+		</header>
+
+		<section class="cards">
+			<!-- Kartları çoğaltabilirsiniz. card-image için data-img attribute'una resim URL'si ekleyin. -->
+			<div class="card animate-on-scroll">
+				<div class="card-image" data-img="33.jpg"></div>
+				<div class="card-body">
+					<div class="price-row">
+						<span class="price-old">AED 100/m</span>
+						<span class="price-new">AED 89/m</span>
+					</div>
+					<ul class="features">
+						<li>%100 pamuk içerir</li>
+						<li>140 cm genişlik</li>
+						<li>Türkiye'de üretilmiştir</li>
+					</ul>
+					</div>
+			</div>
+
+			<div class="card animate-on-scroll">
+				<div class="card-image" data-img="22.jpg"></div>
+				<div class="card-body">
+					<div class="price-row">
+						<span class="price-old">AED 100/m</span>
+						<span class="price-new">AED 89/m</span>
+					</div>
+					<ul class="features">
+						<li>%100 pamuk içerir</li>
+						<li>140 cm genişlik</li>
+						<li>Türkiye'de üretilmiştir</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="card animate-on-scroll">
+				<div class="card-image" data-img="11.jpg"></div>
+				<div class="card-body">
+					<div class="price-row">
+						<span class="price-old">AED 100/m</span>
+						<span class="price-new">AED 89/m</span>
+					</div>
+					<ul class="features">
+						<li>%100 pamuk içerir</li>
+						<li>140 cm genişlik</li>
+						<li>Türkiye'de üretilmiştir</li>
+					</ul>
+				</div>
+			</div>
+
+            <div class="card animate-on-scroll">
+				<div class="card-image" data-img="9.jpg"></div>
+				<div class="card-body">
+					<div class="price-row">
+						<span class="price-old">AED 100/m</span>
+						<span class="price-new">AED 89/m</span>
+					</div>
+					<ul class="features">
+						<li>%100 pamuk içerir</li>
+						<li>140 cm genişlik</li>
+						<li>Türkiye'de üretilmiştir</li>
+					</ul>
+					</div>
+			</div>
+
+            <div class="card animate-on-scroll">
+				<div class="card-image" data-img="8.jpg"></div>
+				<div class="card-body">
+					<div class="price-row">
+						<span class="price-old">AED 100/m</span>
+						<span class="price-new">AED 89/m</span>
+					</div>
+					<ul class="features">
+						<li>%100 pamuk içerir</li>
+						<li>140 cm genişlik</li>
+						<li>Türkiye'de üretilmiştir</li>
+					</ul>
+					</div>
+			</div>
+
+		</section>
+
+		<!-- En Çok Sorulanlar (accordion) -->
+		<section class="faq animate-on-scroll">
+			<div class="faq-inner">
+				<h2 class="faq-title">En Çok Sorulanlar</h2>
+				<div class="accordion">
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas nedir?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Cupra kumas, pamuk linterinden elde edilen selüloz bazli bir kumas türüdür. Dogal yapili, ipeksi dokulu ve nefes alabilir özelliklere sahiptir.</p>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas dogal mi?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Evet, Cupra kumas dogal kaynaklidir. Bitkisel selülozdan elde edilir ve sürdürülebilir üretim yöntemleriyle üretilir.</p>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas terletir mi?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Hayir, Cupra kumas terletmez. Hava geçirgen yapisi sayesinde vücudu serin tutar ve yaz aylarinda konfor saglar.</p>
+						</div>
+					</div>
+
+
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas çeker mi?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Uygun sekilde yikanmadiginda hafif çekme yapabilir. Düsük isida yumuşatıcıyla ve nazik yikama önerilir.</p>
+						</div>
+					</div>
+
+
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas nerelerde kullanilir?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Kadin giyim, astarlik kumas, sal ve abaya,  iç giyim yaygin olarak kullanilir.</p>
+						</div>
+					</div>
+
+
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas pahali mi?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Orta-üst segmentte yer alir. Kalitesi ve çevreci özellikleri nedeniyle fiyati biraz daha yüksek olabilir.</p>
+						</div>
+					</div>
+
+
+					<div class="accordion-item">
+						<button class="question" aria-expanded="false">Cupra kumas bakiminda nelere dikkat edilmeli?</button>
+						<div class="answer" aria-hidden="true">
+							<p>Elde ya da hassas programda yikanmali, dusuk isida ütülenmeli ve tercihen ser
+							<p>Elde ya da hassas programda yikanmali, dusuk isida ütülenmeli ve tercihen sererek kurutulmalidir.</p>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+
+	</main>
+
+	<!-- Image modal (popup) -->
+	<div class="img-modal" id="imgModal" aria-hidden="true">
+		<div class="img-modal-backdrop" id="imgModalBackdrop"></div>
+		<div class="img-modal-content" role="dialog" aria-modal="true">
+			<button class="modal-close" id="modalClose" aria-label="Kapat">×</button>
+			<img id="modalImage" src="" alt="Büyük kumaş görseli">
+		</div>
+	</div>
+
+	<footer class="site-footer">
+		<div class="footer-inner">
+			<div class="contact">
+				<h3>Kumaşçı Dubai</h3>
+				<p>Telefon: <a href="tel:+971501234567">+971 50 000 0000</a></p>
+				<p>Email: <a href="mailto:info@kumasci-dubai.com">info@bosislermuduru.com</a></p>
+				<p>Adres: Habibi Dubai, burj khalifa ahahahh</p>
+			</div>
+
+			<div class="hours">
+				<h4>Çalışma Saatleri</h4>
+				<p>Pzt–Cum: 09:00 – 18:00<br>Cumartesi, Pazar kapalıdır.</p>
+			</div>
+<!-- 
+			<div class="actions">
+				<a class="btn whatsapp" href="https://wa.me/971501234567?text=Merhaba%20Kuma%C5%9F%C4%B1%20Dubai,%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener">WhatsApp ile iletişime geç</a>
+			</div> -->
+		</div>
+		<div class="copyright">© <span id="year"></span> Kumaşçı Dubai. Tüm hakları saklıdır.</div>
+	</footer>
+
+	<!-- Sabit (floating) WhatsApp butonu mobil için -->
+	<a class="whatsapp-float" href="https://wa.me/971555727926?text=%4D%65%72%68%61%62%61%20%52%6F%C5%9Fan%20%6B%75%70%72%61%20%6B%75%6D%61%C5%9F%20%69%6C%65%20%69%6C%65%74%69%C5%9F%69%6D%65%20%67%65%C3%A7%74%69%6E%69%7A%2C%20%73%69%7A%65%20%6E%61%73%C4%B1%6C%20%79%61%72%64%C4%B1%6D%63%C4%B1%20%6F%6C%61%62%69%6C%69%7A%3F" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişime geç">
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+			<path d="M20.52 3.48A11.95 11.95 0 0012 0C5.373 0 .01 5.373.01 12.001a11.9 11.9 0 001.637 6.02L0 24l6.184-1.621A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12 0-3.197-1.245-6.2-3.48-8.52z" fill="#25D366"/>
+			<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.672.149-.199.297-.771.966-.945 1.163-.173.198-.347.223-.644.075-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.058-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.173.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.672-1.612-.922-2.207-.242-.579-.487-.5-.672-.51l-.573-.01c-.2 0-.52.075-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487 0 0 .746.322 1.33.161.584-.161 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#fff"/>
+		</svg>
+	</a>
+
+	<script>document.getElementById('year')?.appendChild(document.createTextNode(new Date().getFullYear()));</script>
+
+	<script>
+// card-image için data-img attribute'unu arayıp arka planı uygular
+document.addEventListener('DOMContentLoaded', function(){
+	// Başlığa animasyon sınıfını ekle
+	var title = document.querySelector('.fancy-title');
+	if(title) title.classList.add('animate');
+
+	// Logo animasyonunu tetikle
+	var logo = document.getElementById('siteLogo') || document.querySelector('.site-logo');
+	if(logo){ setTimeout(function(){ logo.classList.add('animate'); }, 220); }
+
+	// card-image arka planlarını ayarla
+	document.querySelectorAll('.card-image').forEach(function(el){
+		var src = el.getAttribute('data-img') || '';
+		if(src.trim()) el.style.backgroundImage = 'url("' + src + '")';
+	});
+
+	// IntersectionObserver ile kaydırma animasyonu
+	var observer = new IntersectionObserver(function(entries){
+		entries.forEach(function(entry){
+			if(entry.isIntersecting){
+				entry.target.classList.add('in-view');
+				// bir kez gösterildikten sonra observer'ı kaldır
+				observer.unobserve(entry.target);
+			}
+		});
+	},{threshold:0.15});
+
+	document.querySelectorAll('.animate-on-scroll').forEach(function(el){
+		observer.observe(el);
+	});
+
+	// Accordion davranışı
+	document.querySelectorAll('.accordion .question').forEach(function(btn){
+		btn.addEventListener('click', function(){
+			var item = btn.parentElement;
+			var open = item.classList.contains('open');
+			// tüm open'ları kapat
+			document.querySelectorAll('.accordion .accordion-item.open').forEach(function(i){
+				if(i!==item) { i.classList.remove('open'); i.querySelector('.question').setAttribute('aria-expanded','false'); i.querySelector('.answer').setAttribute('aria-hidden','true'); }
+			});
+
+			if(open){
+				item.classList.remove('open');
+				btn.setAttribute('aria-expanded','false');
+				item.querySelector('.answer').setAttribute('aria-hidden','true');
+			}else{
+				item.classList.add('open');
+				btn.setAttribute('aria-expanded','true');
+				item.querySelector('.answer').setAttribute('aria-hidden','false');
+			}
+		});
+	});
+
+	// Image modal behavior
+	var imgModal = document.getElementById('imgModal');
+	var modalImage = document.getElementById('modalImage');
+	var modalClose = document.getElementById('modalClose');
+	var modalBackdrop = document.getElementById('imgModalBackdrop');
+
+	document.querySelectorAll('.card-image').forEach(function(el){
+		el.style.cursor = 'zoom-in';
+		el.addEventListener('click', function(){
+			var src = el.getAttribute('data-img') || '';
+			if(!src) return;
+			modalImage.src = src;
+			imgModal.classList.add('open');
+			imgModal.setAttribute('aria-hidden','false');
+		});
+	});
+
+	function closeModal(){
+		imgModal.classList.remove('open');
+		imgModal.setAttribute('aria-hidden','true');
+		modalImage.src = '';
+	}
+
+	modalClose.addEventListener('click', closeModal);
+	modalBackdrop.addEventListener('click', closeModal);
+	document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+
+});
+</script>
+</body>
+</html>
