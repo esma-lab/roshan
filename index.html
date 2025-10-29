@@ -46,16 +46,16 @@ body::before {
   background-position: center;
   z-index: -1; /* içeriğin arkasında kalsın */
 }
-/* Arka planı hafifçe şeffaf/eşitlemek için overlay
+/* Arka planı hafifçe şeffaf/eşitlemek için overlay*/
 body::before{
 	content:'';
 	position:fixed;
 	top:0;left:0;right:0;bottom:0;
-	background: rgba(255,255,255,0.32); şeffaflık burada ayarlanabilir
+	background: rgba(255,255,255,0.13);
 	pointer-events:none;
 	z-index:0;
 }
-main{position:relative;z-index:1;min-height:100vh;padding:48px 20px} */
+main{position:relative;z-index:1;min-height:100vh;padding:48px 20px}
 
 .baslik {
   font-family: 'Dancing Script', cursive;
